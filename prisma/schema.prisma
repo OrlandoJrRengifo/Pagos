@@ -1,0 +1,103 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["payments"]
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model metodos_pago {
+  id                  Int      @id @default(autoincrement())
+  nombre              String
+  proveedor           String
+  activo              Boolean  @default(true)
+  fecha_creacion      DateTime @default(now())
+  fecha_actualizacion DateTime @default(now())
+  pagos               pagos[]
+
+  @@index([proveedor])
+  @@map("metodos_pago")
+  @@schema("payments")
+}
+
+enum estado_pago {
+  pendiente
+  autorizado
+  rechazado
+  reembolsado
+
+  @@schema("payments")
+}
+
+model pagos_transacciones {
+  id                 Int      @id @default(autoincrement())
+  pago_id            Int
+  tipo               String
+  referencia_externa String?
+  payload            Json?
+  creado_en          DateTime @default(now())
+
+  pago pagos @relation(fields: [pago_id], references: [id], onDelete: Cascade)
+
+  @@index([pago_id])
+  @@map("pagos_transacciones")
+  @@schema("payments")
+}
+
+model usuarios {
+  id                  Int       @id @default(autoincrement())
+  nombre              String
+  rol                 String
+  fecha_creacion      DateTime  @default(now())
+  fecha_actualizacion DateTime  @default(now())
+
+  pagos   pagos[]       @relation("UsuarioPagos")
+  ordenes ordenes[]     @relation("UsuarioOrdenes")
+
+  @@map("usuarios")
+  @@schema("payments")
+}
+
+model ordenes {
+  id                  Int       @id @default(autoincrement())
+  usuario_id          Int
+  descripcion         String?
+  activa              Boolean   @default(true)
+  fecha_creacion      DateTime  @default(now())
+  fecha_actualizacion DateTime  @default(now())
+
+  usuario usuarios @relation("UsuarioOrdenes", fields: [usuario_id], references: [id])
+  pagos   pagos[]  @relation("OrdenPagos")
+
+  @@map("ordenes")
+  @@schema("payments")
+}
+
+model pagos {
+  id                  Int         @id @default(autoincrement())
+  orden_id            Int
+  usuario_id          Int
+  metodo_pago_id      Int
+  sub_total           Decimal
+  descuento           Decimal     @default(0)
+  total               Decimal?    @db.Decimal(12,2)
+  estado              estado_pago @default(pendiente)
+  moneda              String      @db.Char(3)
+  referencia_externa  String?
+  detalle             Json?
+  fecha_creacion      DateTime    @default(now())
+  fecha_actualizacion DateTime    @default(now())
+
+  usuario   usuarios      @relation("UsuarioPagos", fields: [usuario_id], references: [id])
+  metodo    metodos_pago  @relation(fields: [metodo_pago_id], references: [id])
+  orden     ordenes       @relation("OrdenPagos", fields: [orden_id], references: [id])
+  eventos   pagos_transacciones[]
+
+  @@index([orden_id])
+  @@index([estado])
+  @@index([metodo_pago_id])
+  @@map("pagos")
+  @@schema("payments")
+}
