@@ -1,12 +1,39 @@
-import { IsNumber, Min, IsOptional, IsString, Length } from 'class-validator';
+import { IsInt, IsNumber, Min, IsOptional, IsString, Length } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class CreatePaymentDto {
-  @IsNumber() ordenId: number;
-  @IsNumber() usuarioId: number;
-  @IsNumber() metodoPagoId: number;
+  @IsInt()
+  @Type(() => Number)
+  ordenId!: number
 
-  @IsNumber() @Min(0) subTotal: number;
-  @IsNumber() @Min(0) descuento: number;
+  @IsInt()
+  @Type(() => Number)
+  usuarioId!: number
 
-  @IsOptional() @IsString() @Length(3,3) moneda?: string = 'COP';
+  @IsInt()
+  @Type(() => Number)
+  metodoPagoId!: number
+
+  @IsNumber()
+  @Min(0)
+  @Type(() => Number)
+  subTotal!: number
+
+  // puede venir vacío; por defecto 0
+  @IsNumber()
+  @Min(0)
+  @IsOptional()
+  @Type(() => Number)
+  descuento?: number = 0
+
+  // opcional; por defecto 'COP'
+  @IsString()
+  @IsOptional()
+  @Length(3, 3)
+  moneda?: string = 'COP'
+
+  // opcional
+  @IsString()
+  @IsOptional()
+  proveedor?: string
 }

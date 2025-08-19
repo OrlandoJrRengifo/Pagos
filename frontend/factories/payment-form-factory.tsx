@@ -3,10 +3,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import type { Currency } from "../types/payment"
 
 export interface PaymentFormProps {
   onSubmit: (data: any) => void
   loading?: boolean
+  currency?: Currency // Added currency prop to sync with main selector
 }
 
 // Interfaz abstracta para formularios de pago
@@ -17,7 +19,9 @@ export abstract class PaymentFormFactory {
 }
 
 class StripeCreditCardFormFactory extends PaymentFormFactory {
-  createForm({ onSubmit, loading }: PaymentFormProps): React.ReactElement {
+  createForm({ onSubmit, loading, currency = "USD" }: PaymentFormProps): React.ReactElement {
+    const currencySymbol = currency === "EUR" ? "€" : "$"
+
     return (
       <Card key="stripe-credit-card-form" className="border-blue-200">
         <CardHeader>
@@ -45,17 +49,23 @@ class StripeCreditCardFormFactory extends PaymentFormFactory {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="subTotal">Subtotal</Label>
-              <Input id="subTotal" name="subTotal" type="number" step="0.01" required />
+              <Label htmlFor="subTotal">Subtotal ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="subTotal" name="subTotal" type="number" step="0.01" required className="pl-8" />
+              </div>
             </div>
             <div>
-              <Label htmlFor="descuento">Descuento</Label>
-              <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" />
+              <Label htmlFor="descuento">Descuento ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" className="pl-8" />
+              </div>
             </div>
-          </div>
-          <div>
-            <Label htmlFor="moneda">Moneda</Label>
-            <Input id="moneda" name="moneda" defaultValue="USD" maxLength={3} />
           </div>
         </CardContent>
       </Card>
@@ -72,7 +82,9 @@ class StripeCreditCardFormFactory extends PaymentFormFactory {
 }
 
 class PayUCreditDebitFormFactory extends PaymentFormFactory {
-  createForm({ onSubmit, loading }: PaymentFormProps): React.ReactElement {
+  createForm({ onSubmit, loading, currency = "COP" }: PaymentFormProps): React.ReactElement {
+    const currencySymbol = currency === "EUR" ? "€" : "$"
+
     return (
       <Card key="payu-credit-debit-form" className="border-green-200">
         <CardHeader>
@@ -100,17 +112,23 @@ class PayUCreditDebitFormFactory extends PaymentFormFactory {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="subTotal">Subtotal</Label>
-              <Input id="subTotal" name="subTotal" type="number" step="0.01" required />
+              <Label htmlFor="subTotal">Subtotal ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="subTotal" name="subTotal" type="number" step="0.01" required className="pl-8" />
+              </div>
             </div>
             <div>
-              <Label htmlFor="descuento">Descuento</Label>
-              <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" />
+              <Label htmlFor="descuento">Descuento ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" className="pl-8" />
+              </div>
             </div>
-          </div>
-          <div>
-            <Label htmlFor="moneda">Moneda</Label>
-            <Input id="moneda" name="moneda" defaultValue="COP" maxLength={3} />
           </div>
         </CardContent>
       </Card>
@@ -127,7 +145,9 @@ class PayUCreditDebitFormFactory extends PaymentFormFactory {
 }
 
 class PayUNequiFormFactory extends PaymentFormFactory {
-  createForm({ onSubmit, loading }: PaymentFormProps): React.ReactElement {
+  createForm({ onSubmit, loading, currency = "COP" }: PaymentFormProps): React.ReactElement {
+    const currencySymbol = currency === "EUR" ? "€" : "$"
+
     return (
       <Card key="payu-nequi-form" className="border-purple-200">
         <CardHeader>
@@ -155,17 +175,23 @@ class PayUNequiFormFactory extends PaymentFormFactory {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="subTotal">Subtotal</Label>
-              <Input id="subTotal" name="subTotal" type="number" step="0.01" required />
+              <Label htmlFor="subTotal">Subtotal ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="subTotal" name="subTotal" type="number" step="0.01" required className="pl-8" />
+              </div>
             </div>
             <div>
-              <Label htmlFor="descuento">Descuento</Label>
-              <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" />
+              <Label htmlFor="descuento">Descuento ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" className="pl-8" />
+              </div>
             </div>
-          </div>
-          <div>
-            <Label htmlFor="moneda">Moneda</Label>
-            <Input id="moneda" name="moneda" defaultValue="COP" maxLength={3} />
           </div>
         </CardContent>
       </Card>
@@ -182,7 +208,9 @@ class PayUNequiFormFactory extends PaymentFormFactory {
 }
 
 class BankTransferFormFactory extends PaymentFormFactory {
-  createForm({ onSubmit, loading }: PaymentFormProps): React.ReactElement {
+  createForm({ onSubmit, loading, currency = "COP" }: PaymentFormProps): React.ReactElement {
+    const currencySymbol = currency === "EUR" ? "€" : "$"
+
     return (
       <Card key="bank-transfer-form" className="border-orange-200">
         <CardHeader>
@@ -210,17 +238,23 @@ class BankTransferFormFactory extends PaymentFormFactory {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="subTotal">Subtotal</Label>
-              <Input id="subTotal" name="subTotal" type="number" step="0.01" required />
+              <Label htmlFor="subTotal">Subtotal ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="subTotal" name="subTotal" type="number" step="0.01" required className="pl-8" />
+              </div>
             </div>
             <div>
-              <Label htmlFor="descuento">Descuento</Label>
-              <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" />
+              <Label htmlFor="descuento">Descuento ({currency})</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground">
+                  {currencySymbol}
+                </span>
+                <Input id="descuento" name="descuento" type="number" step="0.01" defaultValue="0" className="pl-8" />
+              </div>
             </div>
-          </div>
-          <div>
-            <Label htmlFor="moneda">Moneda</Label>
-            <Input id="moneda" name="moneda" defaultValue="COP" maxLength={3} />
           </div>
         </CardContent>
       </Card>

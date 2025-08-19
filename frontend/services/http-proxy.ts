@@ -1,55 +1,78 @@
 // PATRÓN ESTRUCTURAL: Proxy
 // Centraliza las llamadas HTTP manejando autenticación, logs y errores
+
 export class HttpProxy {
-  private baseUrl: string
-  private defaultHeaders: Record<string, string>
+  private base: string;
+  private defaultHeaders: Record<string, string>;
 
-  constructor(baseUrl = "http://localhost:3000") {
-    this.baseUrl = baseUrl
+  constructor(baseUrl?: string) {
+    const env = process.env.NEXT_PUBLIC_API_URL;
+    // Normaliza (sin barra final)
+    this.base = (env || baseUrl || 'http://localhost:3001').replace(/\/+$/, '');
     this.defaultHeaders = {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+    };
+  }
+
+  private buildUrl(path: string): string {
+    const p = path.startsWith('/') ? path : `/${path}`;
+    return `${this.base}${p}`;
+  }
+
+  private async makeRequest<T>(path: string, options: RequestInit = {}): Promise<T> {
+    const url = this.buildUrl(path);
+
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`[HTTP Proxy] ${options.method ?? 'GET'} ${url}`);
     }
-  }
 
-  private async makeRequest<T>(url: string, options: RequestInit = {}): Promise<T> {
-    const fullUrl = `${this.baseUrl}${url}`
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...this.defaultHeaders,
+        ...(options.headers ?? {}),
+      },
+      // Evita cache de Next durante desarrollo
+      cache: 'no-store',
+    });
 
-    // Log de la petición
-    console.log(`[HTTP Proxy] ${options.method || "GET"} ${fullUrl}`)
-
-    try {
-      const response = await fetch(fullUrl, {
-        ...options,
-        headers: {
-          ...this.defaultHeaders,
-          ...options.headers,
-        },
-      })
-
-      if (!response.ok) {
-        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`)
-      }
-
-      const data = await response.json()
-      console.log(`[HTTP Proxy] Response:`, data)
-      return data
-    } catch (error) {
-      console.error(`[HTTP Proxy] Error:`, error)
-      throw error
+    if (!res.ok) {
+      let body = '';
+      try {
+        body = await res.text();
+      } catch {}
+      throw new Error(`HTTP ${res.status} ${res.statusText} - ${body}`);
     }
+
+    const ct = res.headers.get('content-type') ?? '';
+    if (!ct.includes('application/json')) {
+      return (await res.text()) as unknown as T;
+    }
+    return (await res.json()) as T;
   }
 
-  async get<T>(url: string): Promise<T> {
-    return this.makeRequest<T>(url, { method: "GET" })
+  get<T>(path: string) {
+    return this.makeRequest<T>(path, { method: 'GET' });
   }
 
-  async post<T>(url: string, data: any): Promise<T> {
-    return this.makeRequest<T>(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-    })
+  post<T>(path: string, body?: unknown) {
+    return this.makeRequest<T>(path, {
+      method: 'POST',
+      body: body != null ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  put<T>(path: string, body?: unknown) {
+    return this.makeRequest<T>(path, {
+      method: 'PUT',
+      body: body != null ? JSON.stringify(body) : undefined,
+    });
+  }
+
+  delete<T>(path: string) {
+    return this.makeRequest<T>(path, { method: 'DELETE' });
   }
 }
 
 // Instancia singleton del proxy
-export const httpProxy = new HttpProxy()
+export const httpProxy = new HttpProxy();

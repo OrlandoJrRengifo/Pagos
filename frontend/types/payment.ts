@@ -4,7 +4,7 @@ export interface CreatePaymentDto {
   metodoPagoId: number
   subTotal: number
   descuento: number
-  moneda?: string
+  moneda?: Currency
 }
 
 export interface Payment extends CreatePaymentDto {
@@ -28,3 +28,5 @@ export type PaymentMethod = {
   provider: string
   type: "stripe_credit_card" | "payu_credit_debit" | "payu_nequi" | "bank_transfer"
 }
+
+export type Currency = "USD" | "COP" | "EUR"

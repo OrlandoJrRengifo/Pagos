@@ -1,19 +1,24 @@
-import { httpProxy } from "./http-proxy"
-import type { CreatePaymentDto, Payment } from "../types/payment"
+import { httpProxy } from "./http-proxy";
+import type { CreatePaymentDto, Payment } from "../types/payment";
+
+// Normaliza el path (sin barra final)
+const PATH = (process.env.NEXT_PUBLIC_API_PATH ?? "/payments").replace(/\/+$/, "");
 
 export class PaymentApiService {
-  async createPayment(paymentData: CreatePaymentDto): Promise<Payment> {
-    return httpProxy.post<Payment>("/payments", paymentData)
+  createPayment(data: CreatePaymentDto): Promise<Payment> {
+    return httpProxy.post<Payment>(PATH, data);
   }
 
-  async getPayment(id: number): Promise<Payment> {
-    return httpProxy.get<Payment>(`/payments/${id}`)
+  getPayment(id: number | string): Promise<Payment> {
+    return httpProxy.get<Payment>(`${PATH}/${id}`);
   }
 
-  async getAllPayments(): Promise<Payment[]> {
-    // Nota: Este endpoint no está en el backend, pero lo incluimos para completitud
-    return httpProxy.get<Payment[]>("/payments")
+  // OJO: en tu backend no existe GET /payments (lista).
+  // Si decides crearlo en Nest, esto ya está listo.
+  // Si no, elimina este método o haz que lance un error.
+  getAllPayments(): Promise<Payment[]> {
+    return httpProxy.get<Payment[]>(PATH);
   }
 }
 
-export const paymentApi = new PaymentApiService()
+export const paymentApi = new PaymentApiService();

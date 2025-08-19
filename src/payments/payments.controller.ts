@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query, Headers } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Headers,
+  ParseIntPipe,
+  NotFoundException,
+} from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 
@@ -8,21 +17,35 @@ export class PaymentsController {
 
   @Post()
   create(@Body() dto: CreatePaymentDto) {
-    return this.service.crearPago(dto);
+    return this.service.crearPago({
+      ...dto,
+      descuento: dto.descuento ?? 0,
+      moneda: dto.moneda ?? 'COP',
+    });
   }
 
+  // ✅ NUEVO: GET /payments
+  @Get()
+  getAll() {
+    return this.service.getAll();
+  }
+
+  // ✅ GET /payments/:id (sin tocar el repo desde el controller)
   @Get(':id')
-  async get(@Param('id') id: string) {
-    const pago = await this.service['repo'].findById(Number(id));
+  async get(@Param('id', ParseIntPipe) id: number) {
+    const pago = await this.service.getById(id);
     if (!pago) {
-      return { message: `No se encontró pago con id ${id}` };
+      throw new NotFoundException(`No se encontró pago con id ${id}`);
     }
     return pago;
   }
 
-
   @Post('webhook/:proveedor')
-  webhook(@Param('proveedor') proveedor: string, @Headers() headers: any, @Body() body: any) {
+  webhook(
+    @Param('proveedor') proveedor: string,
+    @Headers() headers: Record<string, string>,
+    @Body() body: any,
+  ) {
     return this.service.procesarWebhook(headers, body, proveedor);
   }
 }
