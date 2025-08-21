@@ -7,16 +7,46 @@ export class PaymentsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: Prisma.pagosCreateInput) {
+    const total = (data.sub_total as number) - (data.descuento as number || 0);
     return this.prisma.pagos.create({
-      data
+      data: { ...data, total },
+      include: {
+        usuario: true,
+        metodo: true,
+        orden: true,
+        eventos: true,
+      },
     });
   }
 
   findById(id: number) {
-    return this.prisma.pagos.findUnique({ where: { id } });
+    return this.prisma.pagos.findUnique({
+      where: { id },
+      include: {
+        usuario: true,
+        metodo: true,
+        orden: true,
+        eventos: true,
+      },
+    });
   }
 
-  updateEstado(id: number, estado: 'pendiente'|'autorizado'|'rechazado'|'reembolsado') {
+  findAll() {
+    return this.prisma.pagos.findMany({
+      orderBy: { id: 'desc' },
+      include: {
+        usuario: true,
+        metodo: true,
+        orden: true,
+        eventos: true,
+      },
+    });
+  }
+
+  updateEstado(
+    id: number,
+    estado: 'pendiente' | 'autorizado' | 'rechazado' | 'reembolsado',
+  ) {
     return this.prisma.pagos.update({ where: { id }, data: { estado } });
   }
 
@@ -28,5 +58,9 @@ export class PaymentsRepository {
 
   findOrdenById(id: number) {
     return this.prisma.ordenes.findUnique({ where: { id } });
+  }
+
+  getMetodoPagoById(id: number) {
+    return this.prisma.metodos_pago.findUnique({ where: { id } });
   }
 }

@@ -131,7 +131,9 @@ export const PaymentList: React.FC = () => {
         <div className="grid gap-4">
           {filteredPayments.map((payment) => {
             const methodInfo = getPaymentMethodInfo(payment.metodoPagoId)
-            const total = payment.total || payment.subTotal - payment.descuento
+            const subTotal = payment.subTotal ?? 0;
+            const descuento = payment.descuento ?? 0;
+            const total = payment.total ?? subTotal - descuento;
 
             return (
               <Card
@@ -166,7 +168,7 @@ export const PaymentList: React.FC = () => {
                     <div>
                       <p className="text-sm font-medium">Subtotal</p>
                       <p className="text-sm text-muted-foreground">
-                        {payment.subTotal.toFixed(2)} {payment.moneda || "COP"}
+                        {subTotal.toFixed(2)} {payment.moneda || "COP"}
                       </p>
                     </div>
                     <div>

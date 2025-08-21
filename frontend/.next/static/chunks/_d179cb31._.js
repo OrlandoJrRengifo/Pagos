@@ -2139,14 +2139,18 @@ const PaymentForm = ()=>{
             ordenId: Number(formData.get("ordenId")),
             usuarioId: Number(formData.get("usuarioId")),
             metodoPagoId: Number(formData.get("metodoPagoId")),
-            subTotal: Number(formData.get("subTotal")),
-            descuento: Number(formData.get("descuento")),
+            subTotal: Number(formData.get("subTotal") ?? 0),
+            descuento: Number(formData.get("descuento") ?? 0),
             moneda: selectedCurrency
         };
+        if (!paymentData.ordenId || !paymentData.usuarioId || !paymentData.metodoPagoId) {
+            alert("Por favor completa todos los campos obligatorios");
+            return;
+        }
         try {
             await createPayment(paymentData);
             alert("Pago creado exitosamente");
-            e.currentTarget.reset();
+            //e.currentTarget.reset()
             setSelectedCurrency("COP");
         } catch (err) {
             console.error("Error al crear pago:", err);
@@ -2180,7 +2184,7 @@ const PaymentForm = ()=>{
                 children: "Crear Nuevo Pago"
             }, void 0, false, {
                 fileName: "[project]/components/payment-form.tsx",
-                lineNumber: 54,
+                lineNumber: 59,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2193,7 +2197,7 @@ const PaymentForm = ()=>{
                                 children: "Seleccionar Método de Pago"
                             }, void 0, false, {
                                 fileName: "[project]/components/payment-form.tsx",
-                                lineNumber: 58,
+                                lineNumber: 63,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -2205,12 +2209,12 @@ const PaymentForm = ()=>{
                                             placeholder: "Selecciona un método de pago"
                                         }, void 0, false, {
                                             fileName: "[project]/components/payment-form.tsx",
-                                            lineNumber: 61,
+                                            lineNumber: 66,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/payment-form.tsx",
-                                        lineNumber: 60,
+                                        lineNumber: 65,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -2223,7 +2227,7 @@ const PaymentForm = ()=>{
                                                             children: provider.name
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/payment-form.tsx",
-                                                            lineNumber: 67,
+                                                            lineNumber: 72,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2231,35 +2235,35 @@ const PaymentForm = ()=>{
                                                             children: provider.description
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/payment-form.tsx",
-                                                            lineNumber: 68,
+                                                            lineNumber: 73,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-form.tsx",
-                                                    lineNumber: 66,
+                                                    lineNumber: 71,
                                                     columnNumber: 19
                                                 }, this)
                                             }, provider.id, false, {
                                                 fileName: "[project]/components/payment-form.tsx",
-                                                lineNumber: 65,
+                                                lineNumber: 70,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/payment-form.tsx",
-                                        lineNumber: 63,
+                                        lineNumber: 68,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/payment-form.tsx",
-                                lineNumber: 59,
+                                lineNumber: 64,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/payment-form.tsx",
-                        lineNumber: 57,
+                        lineNumber: 62,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2269,7 +2273,7 @@ const PaymentForm = ()=>{
                                 children: "Moneda"
                             }, void 0, false, {
                                 fileName: "[project]/components/payment-form.tsx",
-                                lineNumber: 77,
+                                lineNumber: 82,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Select"], {
@@ -2281,12 +2285,12 @@ const PaymentForm = ()=>{
                                             placeholder: "Selecciona una moneda"
                                         }, void 0, false, {
                                             fileName: "[project]/components/payment-form.tsx",
-                                            lineNumber: 80,
+                                            lineNumber: 85,
                                             columnNumber: 15
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/payment-form.tsx",
-                                        lineNumber: 79,
+                                        lineNumber: 84,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -2300,7 +2304,7 @@ const PaymentForm = ()=>{
                                                             children: currency.symbol
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/payment-form.tsx",
-                                                            lineNumber: 86,
+                                                            lineNumber: 91,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2310,7 +2314,7 @@ const PaymentForm = ()=>{
                                                                     children: currency.value
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/payment-form.tsx",
-                                                                    lineNumber: 88,
+                                                                    lineNumber: 93,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2318,47 +2322,47 @@ const PaymentForm = ()=>{
                                                                     children: currency.label
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/payment-form.tsx",
-                                                                    lineNumber: 89,
+                                                                    lineNumber: 94,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/payment-form.tsx",
-                                                            lineNumber: 87,
+                                                            lineNumber: 92,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-form.tsx",
-                                                    lineNumber: 85,
+                                                    lineNumber: 90,
                                                     columnNumber: 19
                                                 }, this)
                                             }, currency.value, false, {
                                                 fileName: "[project]/components/payment-form.tsx",
-                                                lineNumber: 84,
+                                                lineNumber: 89,
                                                 columnNumber: 17
                                             }, this))
                                     }, void 0, false, {
                                         fileName: "[project]/components/payment-form.tsx",
-                                        lineNumber: 82,
+                                        lineNumber: 87,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/payment-form.tsx",
-                                lineNumber: 78,
+                                lineNumber: 83,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/payment-form.tsx",
-                        lineNumber: 76,
+                        lineNumber: 81,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/payment-form.tsx",
-                lineNumber: 56,
+                lineNumber: 61,
                 columnNumber: 7
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Alert"], {
@@ -2367,12 +2371,12 @@ const PaymentForm = ()=>{
                     children: error
                 }, void 0, false, {
                     fileName: "[project]/components/payment-form.tsx",
-                    lineNumber: 101,
+                    lineNumber: 106,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/payment-form.tsx",
-                lineNumber: 100,
+                lineNumber: 105,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -2392,24 +2396,24 @@ const PaymentForm = ()=>{
                             children: loading ? "Procesando..." : "Crear Pago"
                         }, void 0, false, {
                             fileName: "[project]/components/payment-form.tsx",
-                            lineNumber: 110,
+                            lineNumber: 115,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/components/payment-form.tsx",
-                        lineNumber: 109,
+                        lineNumber: 114,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/payment-form.tsx",
-                lineNumber: 105,
+                lineNumber: 110,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/payment-form.tsx",
-        lineNumber: 53,
+        lineNumber: 58,
         columnNumber: 5
     }, this);
 };
@@ -3300,7 +3304,9 @@ const PaymentList = ()=>{
                 className: "grid gap-4",
                 children: filteredPayments.map((payment)=>{
                     const methodInfo = getPaymentMethodInfo(payment.metodoPagoId);
-                    const total = payment.total || payment.subTotal - payment.descuento;
+                    const subTotal = payment.subTotal ?? 0;
+                    const descuento = payment.descuento ?? 0;
+                    const total = payment.total ?? subTotal - descuento;
                     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
                         className: "cursor-pointer hover:shadow-md transition-shadow",
                         onClick: ()=>handlePaymentClick(payment),
@@ -3319,7 +3325,7 @@ const PaymentList = ()=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 145,
+                                                    lineNumber: 147,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -3328,13 +3334,13 @@ const PaymentList = ()=>{
                                                     children: methodInfo.provider
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 146,
+                                                    lineNumber: 148,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 144,
+                                            lineNumber: 146,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3348,31 +3354,31 @@ const PaymentList = ()=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 151,
+                                                    lineNumber: 153,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                                     className: "h-4 w-4 text-muted-foreground"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 152,
+                                                    lineNumber: 154,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 150,
+                                            lineNumber: 152,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/payment-list.tsx",
-                                    lineNumber: 143,
+                                    lineNumber: 145,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/payment-list.tsx",
-                                lineNumber: 142,
+                                lineNumber: 144,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -3386,7 +3392,7 @@ const PaymentList = ()=>{
                                                     children: "Usuario"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 159,
+                                                    lineNumber: 161,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3397,13 +3403,13 @@ const PaymentList = ()=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 160,
+                                                    lineNumber: 162,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 158,
+                                            lineNumber: 160,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3413,7 +3419,7 @@ const PaymentList = ()=>{
                                                     children: "Método"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 163,
+                                                    lineNumber: 165,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3421,13 +3427,13 @@ const PaymentList = ()=>{
                                                     children: methodInfo.name
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 164,
+                                                    lineNumber: 166,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 162,
+                                            lineNumber: 164,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3437,25 +3443,25 @@ const PaymentList = ()=>{
                                                     children: "Subtotal"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 167,
+                                                    lineNumber: 169,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                     className: "text-sm text-muted-foreground",
                                                     children: [
-                                                        payment.subTotal.toFixed(2),
+                                                        subTotal.toFixed(2),
                                                         " ",
                                                         payment.moneda || "COP"
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 168,
+                                                    lineNumber: 170,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 166,
+                                            lineNumber: 168,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3465,7 +3471,7 @@ const PaymentList = ()=>{
                                                     children: "Total"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 173,
+                                                    lineNumber: 175,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3477,30 +3483,30 @@ const PaymentList = ()=>{
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/payment-list.tsx",
-                                                    lineNumber: 174,
+                                                    lineNumber: 176,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/payment-list.tsx",
-                                            lineNumber: 172,
+                                            lineNumber: 174,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/payment-list.tsx",
-                                    lineNumber: 157,
+                                    lineNumber: 159,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/payment-list.tsx",
-                                lineNumber: 156,
+                                lineNumber: 158,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, payment.id, true, {
                         fileName: "[project]/components/payment-list.tsx",
-                        lineNumber: 137,
+                        lineNumber: 139,
                         columnNumber: 15
                     }, this);
                 })
@@ -3515,7 +3521,7 @@ const PaymentList = ()=>{
                 onClose: handleCloseModal
             }, void 0, false, {
                 fileName: "[project]/components/payment-list.tsx",
-                lineNumber: 186,
+                lineNumber: 188,
                 columnNumber: 7
             }, this)
         ]
