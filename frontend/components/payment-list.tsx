@@ -12,20 +12,14 @@ import { usePayments } from "../hooks/use-payments"
 import { PaymentDetailsModal } from "./payment-details-modal"
 import type { Payment } from "../types/payment"
 
-const getPaymentMethodInfo = (metodoPagoId: number) => {
-  const methods = {
-    1: { name: "Tarjeta de Crédito", provider: "Stripe", color: "bg-blue-100 text-blue-800" },
-    2: { name: "Tarjeta de Crédito/Débito", provider: "PayU", color: "bg-green-100 text-green-800" },
-    3: { name: "Pago con Nequi", provider: "PayU", color: "bg-purple-100 text-purple-800" },
-    4: { name: "Transferencia Bancaria", provider: "Bancaria", color: "bg-orange-100 text-orange-800" },
+const getPaymentMethodInfo = (metodo?: { nombre: string; proveedor: string }) => {
+  if (!metodo) return { name: "Desconocido", provider: "N/A", color: "bg-gray-100 text-gray-800" }
+  
+  return {
+    name: metodo.nombre,
+    provider: metodo.proveedor,
+    color: "bg-blue-100 text-blue-800", // o puedes asignar según proveedor si quieres
   }
-  return (
-    methods[metodoPagoId as keyof typeof methods] || {
-      name: "Desconocido",
-      provider: "N/A",
-      color: "bg-gray-100 text-gray-800",
-    }
-  )
 }
 
 export const PaymentList: React.FC = () => {
@@ -130,7 +124,7 @@ export const PaymentList: React.FC = () => {
       ) : (
         <div className="grid gap-4">
           {filteredPayments.map((payment) => {
-            const methodInfo = getPaymentMethodInfo(payment.metodoPagoId)
+            const methodInfo = getPaymentMethodInfo(payment.metodo)
             const subTotal = payment.subTotal ?? 0;
             const descuento = payment.descuento ?? 0;
             const total = payment.total ?? subTotal - descuento;
@@ -159,11 +153,11 @@ export const PaymentList: React.FC = () => {
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <p className="text-sm font-medium">Usuario</p>
-                      <p className="text-sm text-muted-foreground">#{payment.usuarioId}</p>
+                      <p className="text-sm text-muted-foreground">{payment.usuario?.nombre || "Desconocido"}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">Método</p>
-                      <p className="text-sm text-muted-foreground">{methodInfo.name}</p>
+                      <p className="text-sm text-muted-foreground">{payment.metodo?.nombre || "Desconocido"}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium">Subtotal</p>

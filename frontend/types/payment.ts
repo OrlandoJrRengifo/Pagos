@@ -13,7 +13,19 @@ export interface Payment extends CreatePaymentDto {
   estado: string
   fechaCreacion: string
   fechaActualizacion: string
+
+  usuario?: {
+    id: number
+    nombre: string
+  }
+
+  metodo?: {
+    id: number
+    nombre: string
+    proveedor: string
+  }
 }
+
 
 export interface PaymentProvider {
   id: number

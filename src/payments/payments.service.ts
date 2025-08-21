@@ -31,6 +31,8 @@ export class PaymentsService {
       subTotal: p.sub_total instanceof Prisma.Decimal ? p.sub_total.toNumber() : p.sub_total,
       descuento: p.descuento instanceof Prisma.Decimal ? p.descuento.toNumber() : p.descuento,
       total: p.total instanceof Prisma.Decimal ? p.total.toNumber() : p.total,
+      usuario: p.usuario,
+      metodo: p.metodo,
     }));
   }
 
@@ -42,6 +44,8 @@ export class PaymentsService {
       subTotal: p.sub_total instanceof Prisma.Decimal ? p.sub_total.toNumber() : p.sub_total,
       descuento: p.descuento instanceof Prisma.Decimal ? p.descuento.toNumber() : p.descuento,
       total: p.total instanceof Prisma.Decimal ? p.total.toNumber() : p.total,
+      usuario: p.usuario,
+      metodo: p.metodo,
     };
   }
 
