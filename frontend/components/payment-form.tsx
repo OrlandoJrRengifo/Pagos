@@ -24,15 +24,20 @@ export const PaymentForm: React.FC = () => {
       ordenId: Number(formData.get("ordenId")),
       usuarioId: Number(formData.get("usuarioId")),
       metodoPagoId: Number(formData.get("metodoPagoId")),
-      subTotal: Number(formData.get("subTotal")),
-      descuento: Number(formData.get("descuento")),
+      subTotal: Number(formData.get("subTotal") ?? 0),
+      descuento: Number(formData.get("descuento") ?? 0),
       moneda: selectedCurrency,
     }
 
+    if (!paymentData.ordenId || !paymentData.usuarioId || !paymentData.metodoPagoId) {
+      alert("Por favor completa todos los campos obligatorios")
+      return
+    }
+    
     try {
       await createPayment(paymentData)
       alert("Pago creado exitosamente")
-      e.currentTarget.reset()
+      //e.currentTarget.reset()
       setSelectedCurrency("COP")
     } catch (err) {
       console.error("Error al crear pago:", err)

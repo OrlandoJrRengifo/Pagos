@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev:frontend": "cross-env TURBOPACK=0 next dev frontend -p 3000 -H 0.0.0.0",
+    "dev:frontend": "cross-env TURBOPACK=0 next dev -p 3000 -H 0.0.0.0",
     "build:frontend": "next build frontend",
     "start:frontend": "next start frontend -p 3000"
   },
