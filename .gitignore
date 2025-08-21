@@ -1,5 +1,6 @@
 # compiled output
 /dist
+/frontend/.next/
 /node_modules
 /build
 frontend/node_modules/
