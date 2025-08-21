@@ -5,6 +5,7 @@ import { LoggingProxy } from './domain/gateways/proxies/logging.proxy';
 import { SecurityProxy } from './domain/gateways/proxies/segurity.proxy';
 import { AmountLimitsHandler } from './domain/validation/amount-limits.handler';
 import { OrderExistsHandler } from './domain/validation/order-exists.handler';
+import { Prisma } from '@prisma/client';
 
 type CrearPagoInput = {
   ordenId: number;
@@ -23,47 +24,42 @@ export class PaymentsService {
     private readonly gatewayFactory: GatewayFactory,
   ) {}
 
-  // ========= LECTURAS usadas por el controller =========
   async getAll() {
-    if (typeof (this.repo as any).list === 'function') {
-      return (this.repo as any).list();
-    }
-    const prisma: any = (this.repo as any).prisma ?? (this.repo as any)['prisma'];
-    if (prisma?.pago?.findMany) return prisma.pago.findMany({ orderBy: { id: 'desc' } });
-    if (prisma?.pagos?.findMany) return prisma.pagos.findMany({ orderBy: { id: 'desc' } });
-    return [];
+    const pagos = await this.repo.findAll();
+    return pagos.map(p => ({
+      ...p,
+      subTotal: p.sub_total instanceof Prisma.Decimal ? p.sub_total.toNumber() : p.sub_total,
+      descuento: p.descuento instanceof Prisma.Decimal ? p.descuento.toNumber() : p.descuento,
+      total: p.total instanceof Prisma.Decimal ? p.total.toNumber() : p.total,
+    }));
   }
 
   async getById(id: number) {
-    if (typeof (this.repo as any).findById === 'function') {
-      return (this.repo as any).findById(id);
-    }
-    const prisma: any = (this.repo as any).prisma ?? (this.repo as any)['prisma'];
-    if (prisma?.pago?.findUnique) return prisma.pago.findUnique({ where: { id } });
-    if (prisma?.pagos?.findUnique) return prisma.pagos.findUnique({ where: { id } });
-    return null;
+    const p = await this.repo.findById(id);
+    if (!p) return null;
+    return {
+      ...p,
+      subTotal: p.sub_total instanceof Prisma.Decimal ? p.sub_total.toNumber() : p.sub_total,
+      descuento: p.descuento instanceof Prisma.Decimal ? p.descuento.toNumber() : p.descuento,
+      total: p.total instanceof Prisma.Decimal ? p.total.toNumber() : p.total,
+    };
   }
-  // =====================================================
 
   async crearPago(input: CrearPagoInput) {
-    // 1) Validaciones (Chain of Responsibility)
+    
     const chain = new AmountLimitsHandler(5_000_000).setNext(
       new OrderExistsHandler(this.repo),
     );
     await chain.handle(input);
 
-    // 2) Resolver método/proveedor
-    const prisma: any = (this.repo as any).prisma ?? (this.repo as any)['prisma'];
-    const metodo = await prisma?.metodos_pago?.findUnique?.({
-      where: { id: input.metodoPagoId },
-    });
+    const metodo = await this.repo.getMetodoPagoById(input.metodoPagoId);
+
 
     const proveedor = input.proveedor ?? metodo?.proveedor;
     if (!metodo || !metodo.activo || !proveedor) {
       throw new HttpException('Metodo no disponible', HttpStatus.BAD_REQUEST);
     }
 
-    // 3) Guardar pago "pendiente"
     const pago = await this.repo.create({
       orden: { connect: { id: input.ordenId } },
       usuario: { connect: { id: input.usuarioId } },
@@ -74,7 +70,7 @@ export class PaymentsService {
       estado: 'pendiente',
     });
 
-    // 4) Preparar gateway (Abstract Factory + Proxy)
+
     const providerFactory = this.gatewayFactory.getFactory(proveedor);
     const concreteGateway = providerFactory.createGateway();
     const securedGateway = new SecurityProxy(
@@ -83,42 +79,43 @@ export class PaymentsService {
     );
     const gateway = new LoggingProxy(securedGateway);
 
-    // 5) Autorizar
-    const amount =
-      Number((input as any).total) ??
-      Math.max(0, Number(input.subTotal) - Number(input.descuento ?? 0));
-    const orderIdStr = String((pago as any).orden_id ?? input.ordenId);
+    const subtotalNum: number = pago.sub_total instanceof Prisma.Decimal 
+      ? pago.sub_total.toNumber() 
+      : pago.sub_total;
+
+    const descuentoNum: number = pago.descuento instanceof Prisma.Decimal
+      ? pago.descuento.toNumber()
+      : pago.descuento;
+
+    const totalNum: number = pago.total != null 
+      ? (pago.total instanceof Prisma.Decimal ? pago.total.toNumber() : pago.total) 
+      : subtotalNum - descuentoNum;
+
+    const amount: number = totalNum;
+
+    const orderIdStr = String(pago.orden_id);
 
     const res = await gateway.authorize({
       amount,
-      currency: (pago as any).moneda ?? input.moneda ?? 'COP',
-      orderId: orderIdStr,
+      currency: pago.moneda ?? input.moneda ?? 'COP',
+      orderId: String(pago.orden_id ?? input.ordenId),
     });
 
-    // 6) Registrar evento
-    await this.repo.createEvento(
-      (pago as any).id,
-      'autorizacion',
-      res.raw ?? {},
-      res.ref,
-    );
+    await this.repo.createEvento(pago.id, 'autorizacion', res.raw ?? {}, res.ref);
 
-    // 7) Manejar resultado
     if (!res.ok) {
-      await this.repo.updateEstado((pago as any).id, 'rechazado');
+      await this.repo.updateEstado(pago.id, 'rechazado');
       throw new HttpException(
         'Pago rechazado por la pasarela',
         HttpStatus.BAD_REQUEST,
       );
     }
 
-    await this.repo.updateEstado((pago as any).id, 'autorizado');
+    await this.repo.updateEstado(pago.id, 'autorizado');
 
-    // 8) Devolver pago
-    return this.repo.findById((pago as any).id);
+    return this.repo.findById(pago.id);
   }
 
-  // 9) Webhook
   async procesarWebhook(
     headers: Record<string, string>,
     body: any,
