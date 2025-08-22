@@ -37,8 +37,8 @@ export const PaymentList: React.FC = () => {
     if (searchId.trim() === "") {
       setFilteredPayments(payments)
     } else {
-      const filtered = payments.filter(
-        (payment) => payment.id.toString().includes(searchId) || payment.ordenId.toString().includes(searchId),
+      const filtered = payments.filter((payment) => 
+        payment.id.toString().includes(searchId)
       )
       setFilteredPayments(filtered)
     }
@@ -85,7 +85,7 @@ export const PaymentList: React.FC = () => {
           <div className="flex gap-2">
             <div className="flex-1">
               <Input
-                placeholder="Buscar por ID de pago o ID de orden..."
+                placeholder="Buscar por ID de pago..."
                 value={searchId}
                 onChange={(e) => setSearchId(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearchById()}
