@@ -42,13 +42,23 @@ export class PaymentsRepository {
   findAll() {
     return this.prisma.pagos.findMany({
       orderBy: { id: 'desc' },
-      include: {
+      select: {
+        id: true,
+        orden_id: true,
+        usuario_id: true,
+        metodo_pago_id: true,
+        sub_total: true,
+        descuento: true,
+        total: true,
+        estado: true,
+        moneda: true,
+        fecha_creacion: true,
+        fecha_actualizacion: true,
         usuario: true,
         metodo: true,
         orden: true,
-        eventos: true,
       },
-    });
+    })
   }
 
   updateEstado(

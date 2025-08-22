@@ -13,36 +13,36 @@ interface PaymentDetailsModalProps {
 }
 
 const getPaymentMethodInfo = (metodoPagoId: number) => {
-  const methods = {
+  const methods: Record<number, { name: string; provider: string; color: string }> = {
     1: { name: "Tarjeta de Crédito", provider: "Stripe", color: "bg-blue-100 text-blue-800" },
     2: { name: "Tarjeta de Crédito/Débito", provider: "PayU", color: "bg-green-100 text-green-800" },
     3: { name: "Pago con Nequi", provider: "PayU", color: "bg-purple-100 text-purple-800" },
     4: { name: "Transferencia Bancaria", provider: "Bancaria", color: "bg-orange-100 text-orange-800" },
   }
-  return (
-    methods[metodoPagoId as keyof typeof methods] || {
-      name: "Desconocido",
-      provider: "N/A",
-      color: "bg-gray-100 text-gray-800",
-    }
-  )
+  return methods[metodoPagoId] || { name: "Desconocido", provider: "N/A", color: "bg-gray-100 text-gray-800" }
 }
 
 const getStatusBadge = (estado: string) => {
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     pendiente: "bg-yellow-100 text-yellow-800",
     completado: "bg-green-100 text-green-800",
     fallido: "bg-red-100 text-red-800",
     cancelado: "bg-gray-100 text-gray-800",
   }
-  return statusColors[estado.toLowerCase() as keyof typeof statusColors] || "bg-gray-100 text-gray-800"
+  return statusColors[estado.toLowerCase()] || "bg-gray-100 text-gray-800"
 }
 
 export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({ payment, isOpen, onClose }) => {
   if (!payment) return null
 
-  const methodInfo = getPaymentMethodInfo(payment.metodoPagoId)
-  const total = payment.total || payment.subTotal - payment.descuento
+  const methodInfo = getPaymentMethodInfo(payment.metodo?.id ?? 0)
+  const total = payment.total ?? (payment.subTotal ?? 0) - (payment.descuento ?? 0)
+
+  // Asegurarse de que las fechas sean válidas
+  const fechaCreacion = payment.fechaCreacion ? new Date(payment.fechaCreacion).toLocaleString() : "N/A"
+  const fechaActualizacion = payment.fechaActualizacion
+    ? new Date(payment.fechaActualizacion).toLocaleString()
+    : "N/A"
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -58,11 +58,11 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({ paymen
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Orden</p>
-              <p className="text-lg font-semibold">#{payment.ordenId}</p>
+              <p className="text-lg font-semibold">#{payment.orden?.id ?? "N/A"}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-muted-foreground">Usuario</p>
-              <p className="text-lg font-semibold">#{payment.usuarioId}</p>
+              <p className="text-lg font-semibold">{payment.usuario?.nombre ?? "Desconocido"}</p>
             </div>
           </div>
 
@@ -84,13 +84,13 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({ paymen
             <div className="flex justify-between">
               <span className="text-muted-foreground">Subtotal:</span>
               <span>
-                {payment.subTotal.toFixed(2)} {payment.moneda || "COP"}
+                {(payment.subTotal ?? 0).toFixed(2)} {payment.moneda || "COP"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Descuento:</span>
               <span className="text-red-600">
-                -{payment.descuento.toFixed(2)} {payment.moneda || "COP"}
+                -{(payment.descuento ?? 0).toFixed(2)} {payment.moneda || "COP"}
               </span>
             </div>
             <Separator />
@@ -107,11 +107,11 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({ paymen
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Fecha de Creación:</span>
-              <span>{new Date(payment.fechaCreacion).toLocaleDateString()}</span>
+              <span>{fechaCreacion}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Última Actualización:</span>
-              <span>{new Date(payment.fechaActualizacion).toLocaleDateString()}</span>
+              <span>{fechaActualizacion}</span>
             </div>
           </div>
         </div>

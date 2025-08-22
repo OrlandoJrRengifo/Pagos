@@ -24,8 +24,15 @@ export interface Payment extends CreatePaymentDto {
     nombre: string
     proveedor: string
   }
-}
 
+  orden?: {
+    id: number
+  }
+
+  orden_id: number
+  usuario_id: number
+  metodo_pago_id: number
+}
 
 export interface PaymentProvider {
   id: number
