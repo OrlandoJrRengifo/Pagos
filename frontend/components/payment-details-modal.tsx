@@ -38,11 +38,11 @@ export const PaymentDetailsModal: React.FC<PaymentDetailsModalProps> = ({ paymen
   const methodInfo = getPaymentMethodInfo(payment.metodo?.id ?? 0)
   const total = payment.total ?? (payment.subTotal ?? 0) - (payment.descuento ?? 0)
 
-  // Asegurarse de que las fechas sean válidas
-  const fechaCreacion = payment.fechaCreacion ? new Date(payment.fechaCreacion).toLocaleString() : "N/A"
-  const fechaActualizacion = payment.fechaActualizacion
-    ? new Date(payment.fechaActualizacion).toLocaleString()
-    : "N/A"
+  const fechaCreacionRaw = payment.fechaCreacion || (payment as any).fecha_creacion
+  const fechaActualizacionRaw = payment.fechaActualizacion || (payment as any).fecha_actualizacion
+
+  const fechaCreacion = fechaCreacionRaw ? new Date(fechaCreacionRaw).toLocaleString() : "N/A"
+  const fechaActualizacion = fechaActualizacionRaw ? new Date(fechaActualizacionRaw).toLocaleString() : "N/A"
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

@@ -11,8 +11,8 @@ export interface Payment extends CreatePaymentDto {
   id: number
   total: number
   estado: string
-  fechaCreacion: string
-  fechaActualizacion: string
+  fechaCreacion: Date
+  fechaActualizacion: Date
 
   usuario?: {
     id: number
