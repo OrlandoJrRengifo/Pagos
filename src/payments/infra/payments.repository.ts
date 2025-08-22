@@ -7,9 +7,17 @@ export class PaymentsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: Prisma.pagosCreateInput) {
-    const total = (data.sub_total as number) - (data.descuento as number || 0);
+    const sub_total = new Prisma.Decimal(data.sub_total?.toString() || '0');
+    const descuento = new Prisma.Decimal(data.descuento?.toString() || '0');
+    const total = sub_total.minus(descuento);
+
     return this.prisma.pagos.create({
-      data: { ...data, total },
+      data: {
+        ...data,
+        sub_total,
+        descuento,
+        total,
+      },
       include: {
         usuario: true,
         metodo: true,

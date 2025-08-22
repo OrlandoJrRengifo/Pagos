@@ -65,15 +65,15 @@ export class PaymentsService {
     }
 
     const pago = await this.repo.create({
-      orden: { connect: { id: input.ordenId } },
-      usuario: { connect: { id: input.usuarioId } },
-      metodo: { connect: { id: input.metodoPagoId } },
-      sub_total: input.subTotal,
-      descuento: input.descuento ?? 0,
+      orden: { connect: { id: Number(input.ordenId) } },
+      usuario: { connect: { id: Number(input.usuarioId) } },
+      metodo: { connect: { id: Number(input.metodoPagoId) } },
+      sub_total: new Prisma.Decimal(input.subTotal),
+      descuento: new Prisma.Decimal(input.descuento ?? 0),
+      total: new Prisma.Decimal((input.subTotal ?? 0) - (input.descuento ?? 0)),
       moneda: input.moneda ?? 'COP',
       estado: 'pendiente',
     });
-
 
     const providerFactory = this.gatewayFactory.getFactory(proveedor);
     const concreteGateway = providerFactory.createGateway();
