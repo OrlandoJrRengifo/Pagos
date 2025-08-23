@@ -65,13 +65,12 @@ NEXT_PUBLIC_API_PATH=/payments
 Start the backend
 
 ```bash
-cd direccion/Pagos
 npm run dev:backend
 ```
 Start the frontend (in another terminal)
 
 ```bash
-cd direccion/Pagos/frontend
+cd frontend
 npm run dev:frontend
 ```
 
