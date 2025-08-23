@@ -25,50 +25,55 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Install dependencies
 
 ```bash
+# Install backend dependencies
 $ npm install
+
+# Install frontend dependencies
+$ cd frontend
+$ npm install
+$ cd ..
 ```
 
-## Compile and run the project
+## Generate Prisma
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npx prisma generate
 ```
 
-## Run tests
+## Configure environment variables
+
+Create a `.env` file in the root of the project with the following content:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+DATABASE_URL=postgresql://postgres.dctsdejvrkpuaqynakdt:desarrollo2025@aws-1-us-east-2.pooler.supabase.com:5432/postgres
+GATEWAY_TOKEN=supersecreto
+PORT=3001
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Create a `.env.local` file in the frontend folder with the following content:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+NEXT_PUBLIC_API_URL=http://localhost:3001
+NEXT_PUBLIC_API_PATH=/payments
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Run the project
+
+Start the backend
+
+```bash
+cd direccion/Pagos
+npm run dev:backend
+```
+Start the frontend (in another terminal)
+
+```bash
+cd direccion/Pagos/frontend
+npm run dev:frontend
+```
 
 ## Resources
 
